@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>习概重点问答 - 智能背诵复习</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #c0392b;
+            --focus-color: #8e44ad;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --error-color: #c0392b;
+            --bg-color: #f5f6fa;
+            --card-bg: #ffffff;
+            --text-gray: #6b7280;
+        }
+
+        body {
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            background-color: var(--bg-color);
+            color: var(--primary-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 940px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+            padding: 30px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            height: 90vh;
+            position: relative;
+        }
+
+        .branding-section {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+        }
+
+        .branding-link {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .branding-text {
+            font-size: 14px;
+            color: var(--text-gray);
+            margin-right: 12px;
+            transition: color 0.3s;
+        }
+
+        .branding-link:hover .branding-text { color: var(--accent-color); }
+
+        .branding-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .branding-link:hover .branding-avatar {
+            border-color: var(--accent-color);
+            transform: scale(1.05);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin: 10px 0 8px 0;
+            font-size: 24px;
+            flex-shrink: 0;
+            padding-right: 100px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-gray);
+            margin: 0 0 16px 0;
+            font-size: 14px;
+            flex-shrink: 0;
+            padding-right: 100px;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            flex-shrink: 0;
+            border: 1px solid #eee;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .controls-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .mode-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .nav-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        button {
+            padding: 8px 14px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            background-color: #fff;
+            color: #4b5563;
+        }
+
+        button.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        button.active.focus-mode-btn {
+            background-color: var(--focus-color);
+            border-color: var(--focus-color);
+        }
+
+        button:hover:not(:disabled) {
+            background-color: #f3f4f6;
+            transform: translateY(-1px);
+        }
+
+        button.active:hover { opacity: 0.92; }
+
+        button:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .jump-input {
+            width: 50px;
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .question-card {
+            background: #fff;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .section-badge {
+            display: inline-block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent-color);
+            background: #fff5f5;
+            border: 1px solid #f2c7c3;
+            border-radius: 999px;
+            padding: 4px 10px;
+            margin-bottom: 12px;
+            width: fit-content;
+        }
+
+        .question-title {
+            font-size: 19px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #111827;
+            line-height: 1.6;
+        }
+
+        .hint-text {
+            font-size: 15px;
+            color: #9a5b00;
+            background-color: #fff7e6;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--warning-color);
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            resize: vertical;
+            font-size: 16px;
+            font-family: inherit;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.1);
+        }
+
+        .action-area {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: auto;
+        }
+
+        .btn-submit { background-color: var(--success-color); color: white; border: none; flex: 2; }
+        .btn-submit:hover { background-color: #219150; }
+        .btn-hint { background-color: #fff; color: var(--warning-color); border-color: var(--warning-color); }
+        .btn-hint:hover { background-color: var(--warning-color); color: white; }
+        .btn-prev { flex: 1; }
+        .btn-next { flex: 1; border-color: var(--accent-color); color: var(--accent-color); }
+        .btn-next:hover { background-color: var(--accent-color); color: white; }
+
+        .result-area {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f9fafb;
+            display: none;
+            border: 1px solid #eee;
+        }
+
+        .result-header {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .score-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: white;
+        }
+
+        .badge-pass { background-color: var(--success-color); }
+        .badge-fail { background-color: var(--error-color); }
+
+        .standard-answer {
+            color: #374151;
+            background: #eefdf5;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid var(--success-color);
+            line-height: 1.7;
+            white-space: pre-wrap;
+            font-size: 15px;
+        }
+
+        .list-view-area {
+            display: none;
+            flex-grow: 1;
+            overflow-y: auto;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 15px;
+        }
+
+        .list-item {
+            padding: 18px 20px;
+            border-bottom: 1px solid #f3f4f6;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .list-item:hover { background-color: #f9fafb; }
+        .list-item.active-item { background-color: #fff5f5; border-left: 4px solid var(--accent-color); }
+
+        .list-s {
+            font-size: 13px;
+            color: var(--accent-color);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .list-q {
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .list-a {
+            color: #374151;
+            font-size: 15px;
+            line-height: 1.65;
+            white-space: pre-wrap;
+        }
+
+        .mini-note {
+            font-size: 13px;
+            color: var(--text-gray);
+        }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+        @media (max-width: 720px) {
+            .container { height: auto; min-height: 94vh; padding: 20px; }
+            .branding-section { position: static; align-self: flex-end; margin-bottom: 8px; }
+            h1, .subtitle { padding-right: 0; }
+            .action-area { flex-wrap: wrap; }
+            .btn-submit { flex-basis: 100%; order: -1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="branding-section">
+        <a href="https://github.com/zzx060827" target="_blank" rel="noopener noreferrer" class="branding-link">
+            <span class="branding-text">Presented by zzx</span>
+            <img src="https://i.postimg.cc/44VBbR31/20250611113901.jpg" class="branding-avatar" alt="User Avatar" onerror="this.style.display='none'">
+        </a>
+    </div>
+
+    <h1>习概重点问答背诵</h1>
+
+    <div class="stats-bar">
+        <span id="data-source-text">当前题库: 习概重点问答</span>
+        <span id="progress-text">进度: 1 / 51</span>
+        <span id="score-text">准确率: --</span>
+        <span id="error-count" style="color: var(--error-color);">错题本: 0</span>
+        <span class="mini-note">答案已按“短句 + 逻辑点”整理</span>
+    </div>
+
+    <div class="controls-row">
+        <div class="mode-group">
+            <button id="mode-seq" class="active" onclick="switchMode('seq')">顺序模式</button>
+            <button id="mode-rand" onclick="switchMode('rand')">随机模式</button>
+            <button id="mode-focus" class="focus-mode-btn" onclick="switchMode('focus')">重点模式</button>
+            <button id="mode-err" onclick="switchMode('err')">错题本</button>
+            <button id="mode-list" onclick="switchMode('list')">知识点一览</button>
+        </div>
+
+        <div class="nav-group" id="nav-controls">
+            <span>跳转至:</span>
+            <input type="number" id="jump-index" class="jump-input" min="1" onkeypress="handleJumpEnter(event)">
+            <button onclick="jumpToQuestion()">Go</button>
+        </div>
+    </div>
+
+    <div id="quiz-area" class="question-card">
+        <div id="section-text" class="section-badge">加载中...</div>
+        <div id="question-text" class="question-title">加载中...</div>
+
+        <div id="hint-display" class="hint-text"></div>
+
+        <textarea id="user-input" placeholder="请在此输入你的答案...（支持模糊匹配，不计标点符号）"></textarea>
+
+        <div class="action-area">
+            <button class="btn-prev" onclick="changeQuestion(-1)">上一题</button>
+            <button class="btn-hint" onclick="toggleHint()">💡 查看提示</button>
+            <button class="btn-submit" id="btn-submit" onclick="checkAnswer()">提交验证</button>
+            <button class="btn-next" id="btn-next" onclick="changeQuestion(1)">下一题</button>
+        </div>
+
+        <div id="result-area" class="result-area">
+            <div id="result-header" class="result-header"></div>
+            <div class="answer-comparison">
+                <div id="standard-answer" class="standard-answer"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="list-view" class="list-view-area"></div>
+</div>
+
+<script>
+    const data = [
+  {
+    "s": "导论——马克思主义中国化时代化新的飞跃",
+    "focus": false,
+    "h": "三个“什么样+怎样”",
+    "q": "习近平新时代中国特色社会主义思想回答的重大时代课题是什么？",
+    "a": "1.坚持和发展什么样的中国特色社会主义、怎样坚持和发展中国特色社会主义。\n2.建设什么样的社会主义现代化强国、怎样建设社会主义现代化强国。\n3.建设什么样的长期执政的马克思主义政党、怎样建设长期执政的马克思主义政党。"
+  },
+  {
+    "s": "导论——马克思主义中国化时代化新的飞跃",
+    "focus": false,
+    "h": "六个坚持",
+    "q": "习近平新时代中国特色社会主义思想的世界观和方法论是什么？",
+    "a": "1.坚持人民至上。\n2.坚持自信自立。\n3.坚持守正创新。\n4.坚持问题导向。\n5.坚持系统观念。\n6.坚持胸怀天下。"
+  },
+  {
+    "s": "导论——马克思主义中国化时代化新的飞跃",
+    "focus": false,
+    "h": "十个明确，十四个坚持，十三个方面成就",
+    "q": "十个明确，十四个坚持，十三个方面成就",
+    "a": "可以自行查阅背诵"
+  },
+  {
+    "s": "导论——马克思主义中国化时代化新的飞跃",
+    "focus": false,
+    "h": "两个确立",
+    "q": "“两个确立”是什么？",
+    "a": "1.确立习近平同志党中央核心、全党的核心地位。\n2.确立习近平新时代中国特色社会主义思想的指导地位。"
+  },
+  {
+    "s": "导论——马克思主义中国化时代化新的飞跃",
+    "focus": false,
+    "h": "两个维护",
+    "q": "“两个维护”是什么？",
+    "a": "1.坚决维护习近平总书记党中央核心、全党的核心地位。\n2.坚决维护以习近平同志为核心的党中央权威和集中统一领导。"
+  },
+  {
+    "s": "第一节——新时代坚持和发展中国特色社会主义",
+    "focus": false,
+    "h": "历史选择，社会主义，中国特色",
+    "q": "中国特色社会主义是什么？",
+    "a": "1.是近代以来中国社会发展的必然选择。\n2.是历史和人民的选择。\n3.坚持科学社会主义基本原则，又具有鲜明中国特色。"
+  },
+  {
+    "s": "第一节——新时代坚持和发展中国特色社会主义",
+    "focus": false,
+    "h": "主要矛盾，新时代依据",
+    "q": "我国社会主要矛盾是什么？",
+    "a": "1.人民日益增长的美好生活需要和不平衡不充分的发展之间的矛盾。"
+  },
+  {
+    "s": "第一节——新时代坚持和发展中国特色社会主义",
+    "focus": false,
+    "h": "四个自信，基本理论路线方略，五位一体，四个全面",
+    "q": "怎样坚持和发展中国特色社会主义？",
+    "a": "1.坚定道路、理论、制度、文化自信。\n2.贯彻党的基本理论、基本路线、基本方略。\n3.统筹推进“五位一体”总体布局。\n4.协调推进“四个全面”战略布局。"
+  },
+  {
+    "s": "第一节——新时代坚持和发展中国特色社会主义",
+    "focus": false,
+    "h": "五位一体，四个全面",
+    "q": "“五位一体”和“四个全面”是什么？",
+    "a": "1.五位一体：经济建设、政治建设、文化建设、社会建设、生态文明建设。\n2.四个全面：全面建设社会主义现代化国家、全面深化改革、全面依法治国、全面从严治党。"
+  },
+  {
+    "s": "第一节——新时代坚持和发展中国特色社会主义",
+    "focus": false,
+    "h": "根本成就，历史结论，人民选择",
+    "q": "如何理解中国特色社会主义是党和人民取得的根本成就？",
+    "a": "1.来自改革开放、新中国探索、党的社会革命和中华文明传承。\n2.是历史的结论、人民的选择。"
+  },
+  {
+    "s": "第一节——新时代坚持和发展中国特色社会主义",
+    "focus": false,
+    "h": "新阶段，小康，强国，中国梦",
+    "q": "怎样认识我国发展新的历史方位？",
+    "a": "1.中国特色社会主义进入新时代。\n2.是全面建成小康社会、建设现代化强国的时代。\n3.是实现中国梦、民族从站起来富起来到强起来的时代。\n4.主要矛盾发生转化。"
+  },
+  {
+    "s": "第一节——新时代坚持和发展中国特色社会主义",
+    "focus": false,
+    "h": "道路，理论，制度，文化",
+    "q": "为什么要坚定“四个自信”？",
+    "a": "1.自信来源于实践、人民和真理。\n2.道路是实现途径，理论是行动指南。\n3.制度是根本保障，文化是精神力量。\n4.文化自信更基础、更广泛、更深厚。"
+  },
+  {
+    "s": "第二节——以中国式现代化全面推进中华民族伟大复兴",
+    "focus": true,
+    "h": "中国梦，两个一百年，全面小康",
+    "q": "中国梦是什么？",
+    "a": "1.是什么：实现中华民族伟大复兴是近代最伟大的梦想。\n2.怎么做：确立“两个一百年”奋斗目标。\n3.新时代成果：全面建成小康社会。"
+  },
+  {
+    "s": "第二节——以中国式现代化全面推进中华民族伟大复兴",
+    "focus": true,
+    "h": "本世纪中叶，强国目标",
+    "q": "全面建成社会主义现代化强国的目标是什么？",
+    "a": "到本世纪中叶，把我国建成富强民主文明和谐美丽的社会主义现代化强国。"
+  },
+  {
+    "s": "第二节——以中国式现代化全面推进中华民族伟大复兴",
+    "focus": true,
+    "h": "康庄大道，共同特征，中国特色，人类文明新形态，五原则六关系",
+    "q": "中国式现代化的地位是什么？",
+    "a": "1.特征：既有各国现代化共同特征，更有基于国情的中国特色。\n2.贡献：创造人类文明新形态，为人类现代化提供新选择。\n3.怎么做：坚持五条重大原则，处理六个重大关系。"
+  },
+
+  {
+    "s": "第二节——以中国式现代化全面推进中华民族伟大复兴",
+    "focus": true,
+    "h": "本质要求",
+    "q": "中国式现代化的本质要求是什么？",
+    "a": "1.坚持中国共产党领导，坚持中国特色社会主义。\n2.实现高质量发展，发展全过程人民民主。\n3.丰富人民精神世界，实现全体人民共同富裕。\n4.促进人与自然和谐共生。\n5.推动构建人类命运共同体，创造人类文明新形态。"
+  },
+  {
+    "s": "第二节——以中国式现代化全面推进中华民族伟大复兴",
+    "focus": true,
+    "h": "五大原则",
+    "q": "推进中国式现代化必须把握哪些重大原则？",
+    "a": "1.坚持和加强党的全面领导。\n2.坚持中国特色社会主义道路。\n3.坚持以人民为中心的发展思想。\n4.坚持深化改革开放。\n5.坚持发扬斗争精神。"
+  },
+  {
+    "s": "第二节——以中国式现代化全面推进中华民族伟大复兴",
+    "focus": true,
+    "h": "六个关系",
+    "q": "推进中国式现代化要处理好哪些重大关系？",
+    "a": "1.顶层设计与实践探索。\n2.战略与策略。\n3.守正与创新。\n4.效率与公平。\n5.活力与秩序。\n6.自立自强与对外开放。"
+  },
+  {
+    "s": "第二节——以中国式现代化全面推进中华民族伟大复兴",
+    "focus": true,
+    "h": "国家梦，民族梦，个人梦",
+    "q": "如何理解中国梦与个人梦的关系？",
+    "a": "1.中国梦是国家的梦、民族的梦，也是每个中国人的梦。\n2.每个人都有发展自我、奉献社会的机会。\n3.个人梦想与祖国发展、时代进步相统一。"
+  },
+  {
+    "s": "第二节——以中国式现代化全面推进中华民族伟大复兴",
+    "focus": true,
+    "h": "全面小康，第一个百年，民族复兴",
+    "q": "全面建成小康社会有什么意义？",
+    "a": "1.完成第一个百年奋斗目标。\n2.为现代化强国建设奠定基础。\n3.推动民族复兴向前迈出新步伐。"
+  },
+  
+  {
+    "s": "第三节——坚持党的全面领导",
+    "focus": false,
+    "h": "最高政治领导力量，本质特征，最大优势，必由之路",
+    "q": "为什么要坚持党的领导？",
+    "a": "1.中国共产党是最高政治领导力量。\n2.党的领导是中国特色社会主义最本质的特征。\n3.党的领导是中国特色社会主义制度的最大优势。\n4.坚持党的全面领导是坚持和发展中国特色社会主义的必由之路。"
+  },
+  {
+    "s": "第三节——坚持党的全面领导",
+    "focus": false,
+    "h": "全面系统整体，四个意识，两个维护，领导制度",
+    "q": "怎样实现党的全面领导？",
+    "a": "1.党的领导是全面的、系统的、整体的。\n2.增强“四个意识”，做到“两个维护”。\n3.完善总揽全局、协调各方的党的领导制度体系。"
+  },
+  {
+    "s": "第三节——坚持党的全面领导",
+    "focus": false,
+    "h": "政治，大局，核心，看齐",
+    "q": "“四个意识”是什么？",
+    "a": "政治意识、大局意识、核心意识、看齐意识。"
+  },
+
+  {
+    "s": "第三节——坚持党的全面领导",
+    "focus": false,
+    "h": "最大国情，性质方向命运，制度优势",
+    "q": "如何认识中国最大的国情就是中国共产党的领导？",
+    "a": "1.党的领导地位由历史和人民形成。\n2.关系中国特色社会主义性质、方向和命运。\n3.坚持党的领导才能发挥制度优势、推动事业发展。"
+  },
+  {
+    "s": "第三节——坚持党的全面领导",
+    "focus": false,
+    "h": "最高原则，核心权威，民主集中制",
+    "q": "如何理解党中央集中统一领导是党的领导的最高原则？",
+    "a": "1.这是重大建党原则。\n2.维护党中央核心和权威，是贯彻路线方针的支撑。\n3.依靠民主集中制实现集中统一。"
+  },
+  {
+    "s": "第四节——坚持以人民为中心",
+    "focus": false,
+    "h": "历史动力，江山人民，依靠人民",
+    "q": "为什么要坚持以人民为中心？",
+    "a": "1.人民是创造历史的动力。\n2.江山就是人民、人民就是江山。\n3.党依靠人民创造历史伟业。"
+  },
+  {
+    "s": "第四节——坚持以人民为中心",
+    "focus": false,
+    "h": "人民立场，初心使命，奋斗目标",
+    "q": "如何理解不断实现人民对美好生活的向往？",
+    "a": "1.人民立场是党的根本政治立场。\n2.为人民谋幸福、为民族谋复兴是初心使命。\n3.党为人民的美好生活奋斗。"
+  },
+  {
+    "s": "第四节——坚持以人民为中心",
+    "focus": false,
+    "h": "群众路线，全面发展，共同富裕",
+    "q": "如何理解坚持以人民为中心的发展思想？",
+    "a": "1.坚持并贯彻党的群众路线。\n2.促进人的全面发展。\n3.推动全体人民朝共同富裕目标迈进。"
+  },
+  {
+    "s": "第四节——坚持以人民为中心",
+    "focus": false,
+    "h": "根基，血脉，力量",
+    "q": "为什么说党的根基、血脉、力量在人民？",
+    "a": "1.人民创造历史，党依靠人民创造伟业。\n2.由社会主义国家性质和党的宗旨决定。\n3.人民立场是党的根本立场。"
+  },
+  {
+    "s": "第四节——坚持以人民为中心",
+    "focus": false,
+    "h": "时代，答卷，人民",
+    "q": "如何理解“时代是出卷人，我们是答卷人，人民是阅卷人”？",
+    "a": "1.顺应人民对美好生活的期待。\n2.共产党依靠人民创造历史伟业。\n3.以人民满意作为最终评判标准。"
+  },
+  {
+    "s": "第四节——坚持以人民为中心",
+    "focus": false,
+    "h": "本质要求，共同富裕，分配",
+    "q": "为什么要推动全体人民共同富裕？",
+    "a": "1.是中国特色社会主义的本质要求。\n2.是中国式现代化的重要特征。\n3.既是经济问题，也是政治问题。\n4.关键要解决分配问题。"
+  },
+  {
+    "s": "第五节——全面深化改革开放",
+    "focus": false,
+    "h": "关键一招，必由之路，重要法宝",
+    "q": "改革开放的意义是什么？",
+    "a": "1.是决定当代中国命运的关键一招。\n2.是坚持和发展中国特色社会主义的必由之路。\n3.是党和人民大踏步赶上时代的重要法宝。\n4.是实现奋斗目标和民族复兴的关键一招。"
+  },
+  {
+    "s": "第五节——全面深化改革开放",
+    "focus": false,
+    "h": "啃硬骨头，涉险滩，深刻变革",
+    "q": "为什么说新时代全面深化改革开放是一场深刻革命？",
+    "a": "1.要破除体制机制弊端和思想观念束缚。\n2.推动历史性变革、系统性重塑、整体性重构。\n3.是人民广泛参与的全面系统整体改革。"
+  },
+  {
+    "s": "第五节——全面深化改革开放",
+    "focus": false,
+    "h": "总目标，正确方向，治理现代化，高水平开放",
+    "q": "怎样全面深化改革开放？",
+    "a": "1.坚持全面深化改革总目标。\n2.坚持正确方向和方法论。\n3.推进国家治理体系和治理能力现代化。\n4.坚定推进全面深化改革和高水平对外开放。"
+  },
+  {
+    "s": "第五节——全面深化改革开放",
+    "focus": false,
+    "h": "制度，治理体系，治理能力",
+    "q": "全面深化改革总目标是什么？",
+    "a": "完善和发展中国特色社会主义制度，推进国家治理体系和治理能力现代化。"
+  },
+  {
+    "s": "第五节——全面深化改革开放",
+    "focus": false,
+    "h": "制度自信，治理效能",
+    "q": "如何理解中国特色社会主义制度和国家治理体系？",
+    "a": "1.要坚定制度自信。\n2.把制度优势转化为治理效能。\n3.制度建设围绕经济、政治、文化、社会、生态和党建展开。"
+  },
+  {
+    "s": "第五节——全面深化改革开放",
+    "focus": false,
+    "h": "开放基本国策，文明成果，根本动力",
+    "q": "如何理解“中国开放的大门只会越开越大”？",
+    "a": "1.改革开放是关键一招和必由之路。\n2.高水平对外开放为民族复兴提供动力。\n3.坚持对外开放基本国策，吸收借鉴文明成果。"
+  },
+  {
+    "s": "第六节——推动高质量发展",
+    "focus": true,
+    "h": "党的领导，人民中心，稳中求进",
+    "q": "新时代经济发展要把握什么总要求？",
+    "a": "1.加强党对经济工作的全面领导。\n2.坚持以人民为中心的发展思想。\n3.坚持稳中求进工作总基调。"
+  },
+  {
+    "s": "第六节——推动高质量发展",
+    "focus": true,
+    "h": "新阶段，新理念，基本经济制度，新发展格局",
+    "q": "推动高质量发展的三个重要方面是什么？",
+    "a": "1.立足新发展阶段、贯彻新发展理念。\n2.坚持和完善社会主义基本经济制度。\n3.构建新发展格局，推动高质量发展。"
+  },
+  {
+    "s": "第六节——推动高质量发展",
+    "focus": true,
+    "h": "创新协调绿色开放共享",
+    "q": "新发展理念是什么？",
+    "a": "创新、协调、绿色、开放、共享。"
+  },
+  {
+    "s": "第六节——推动高质量发展",
+    "focus": true,
+    "h": "五大发展问题",
+    "q": "如何理解新发展理念引领高质量发展？",
+    "a": "1.创新解决发展动力问题。\n2.协调解决发展不平衡问题。\n3.绿色解决人与自然和谐共生问题。\n4.开放解决内外联动问题。\n5.共享解决社会公平正义问题。"
+  },
+  {
+    "s": "第六节——推动高质量发展",
+    "focus": true,
+    "h": "两个毫不动摇，分配，市场经济",
+    "q": "社会主义基本经济制度的新概括是什么？",
+    "a": "1.毫不动摇巩固和发展公有制经济。\n2.毫不动摇鼓励、支持、引导非公有制经济发展。\n3.坚持按劳分配为主体、多种分配方式并存。\n4.构建高水平社会主义市场经济体制。"
+  },
+  {
+    "s": "第六节——推动高质量发展",
+    "focus": true,
+    "h": "制度支撑，生产关系",
+    "q": "社会主义基本经济制度有什么意义？",
+    "a": "1.是生产关系在制度上的体现。\n2.具有基础性、决定性地位。\n3.是实现高质量发展的制度保障。"
+  },
+  {
+    "s": "第六节——推动高质量发展",
+    "focus": true,
+    "h": "国内大循环，双循环",
+    "q": "新发展格局是什么？",
+    "a": "以国内大循环为主体、国内国际双循环相互促进。"
+  },
+  {
+    "s": "第六节——推动高质量发展",
+    "focus": true,
+    "h": "阶段环境条件，比较优势，客观规律，外部挑战",
+    "q": "为什么要加快构建新发展格局？",
+    "a": "1.我国发展阶段、环境、条件发生变化。\n2.比较优势变化要求审时度势。\n3.体现对客观经济规律的把握。\n4.回应国内外环境深刻变化带来的挑战。"
+  },
+  {
+    "s": "第六节——推动高质量发展",
+    "focus": true,
+    "h": "供给侧，扩大内需",
+    "q": "构建新发展格局的重点是什么？",
+    "a": "1.深化供给侧结构性改革。\n2.把握扩大内需战略基点。\n3.统筹发展和安全。\n4.促进全体人民共同富裕。"
+  },
+  {
+    "s": "第六节——推动高质量发展",
+    "focus": true,
+    "h": "实体经济，创新，乡村，区域，开放，改革",
+    "q": "如何认识现代化产业体系、乡村振兴和区域协调发展？",
+    "a": "1.实体经济筑牢基础。\n2.创新驱动强化支撑。\n3.乡村振兴夯实基础。\n4.区域协调优化空间布局。\n5.开放型经济提升国际竞争力。\n6.深化经济体制改革提供制度保障。"
+  },
+  {
+    "s": "第七节——社会主义现代化的教育、科技、人才战略",
+    "focus": false,
+    "h": "基础性战略性支撑，三强一致",
+    "q": "为什么要坚持教育、科技、人才一体推进？",
+    "a": "1.三者是现代化建设的基础性、战略性支撑。\n2.教育强国、科技强国、人才强国相互支撑。\n3.科技是第一生产力，人才是第一资源，创新是第一动力。"
+  },
+  {
+    "s": "第七节——社会主义现代化的教育、科技、人才战略",
+    "focus": false,
+    "h": "科教兴国，人才强国，创新驱动",
+    "q": "教育科技人才相关战略和要求是什么？",
+    "a": "1.实施科教兴国战略、人才强国战略、创新驱动发展战略。\n2.坚持教育优先发展、科技自立自强、人才引领驱动。"
+  },
+  {
+    "s": "第七节——社会主义现代化的教育、科技、人才战略",
+    "focus": false,
+    "h": "国之大计，优先发展，立德树人",
+    "q": "如何理解教育强国？",
+    "a": "1.教育是国之大计、党之大计。\n2.在现代化建设中具有基础性、先导性、全局性地位。\n3.坚持教育优先发展，落实立德树人根本任务。\n4.办好人民满意的教育。"
+  },
+  {
+    "s": "第七节——社会主义现代化的教育、科技、人才战略",
+    "focus": false,
+    "h": "国之利器，自立自强，关键核心技术",
+    "q": "如何建设科技强国？",
+    "a": "1.科技是国之利器，是现代化建设中最活跃因素。\n2.实现高水平科技自立自强。\n3.实施创新驱动发展战略。\n4.发挥新型举国体制优势，攻克关键核心技术。"
+  },
+  {
+    "s": "第七节——社会主义现代化的教育、科技、人才战略",
+    "focus": false,
+    "h": "战略资源，党管人才，创新高地",
+    "q": "如何建设人才强国？",
+    "a": "1.人才是民族振兴、国际竞争的战略资源。\n2.坚持党管人才原则，实施人才强国战略。\n3.培养德才兼备高素质人才。\n4.建设世界重要人才中心和创新高地。"
+  },
+  {
+    "s": "第八节——发展全过程人民民主",
+    "focus": false,
+    "h": "社会主义生命，应有之义",
+    "q": "人民民主的重要性是什么？",
+    "a": "1.人民民主是社会主义的生命。\n2.是全面建设社会主义现代化国家的应有之义。"
+  },
+  {
+    "s": "第八节——发展全过程人民民主",
+    "focus": false,
+    "h": "本质属性，四个统一，全链条全方位全覆盖",
+    "q": "全过程人民民主是什么？",
+    "a": "1.是社会主义民主政治的本质属性。\n2.统一过程民主和成果民主、程序民主和实质民主。\n3.统一直接民主和间接民主、人民民主和国家意志。\n4.是全链条、全方位、全覆盖的民主。"
+  },
+  {
+    "s": "第八节——发展全过程人民民主",
+    "focus": false,
+    "h": "最广泛，最真实，最管用",
+    "q": "为什么说全过程人民民主最广泛、最真实、最管用？",
+    "a": "1.最广泛：全体人民持续参与，覆盖各领域层级群体。\n2.最真实：党的主张、国家意志、人民意愿相统一。\n3.最管用：有效维护人民利益。"
+  },
+  {
+    "s": "第八节——发展全过程人民民主",
+    "focus": false,
+    "h": "政治道路，制度保障，协商，基层，统一战线",
+    "q": "如何践行全过程人民民主？",
+    "a": "1.走中国特色社会主义政治发展道路。\n2.加强人民当家作主制度保障。\n3.全面发展协商民主。\n4.积极发展基层民主。\n5.巩固发展新时代爱国统一战线。"
+  },
+  {
+    "s": "第八节——发展全过程人民民主",
+    "focus": false,
+    "h": "不能照搬，历史民意，制度保障",
+    "q": "为什么我国不能照搬他国政治制度？",
+    "a": "1.照搬他国制度会水土不服。\n2.我国制度源于历史和民意。\n3.能保障中国发展和中国梦想。\n4.具有自我完善、自我发展的生命力。"
+  },
+  {
+    "s": "第八节——发展全过程人民民主",
+    "focus": false,
+    "h": "人大制度，协商民主，基层民主",
+    "q": "如何健全人民当家作主制度体系？",
+    "a": "1.坚持人民代表大会制度这一根本政治制度。\n2.完善协商民主和多党合作政治协商制度。\n3.发展基层民主、民族区域自治和基层群众自治。\n4.构建多样畅通有序的民主渠道。"
+  },
+  {
+    "s": "第八节——发展全过程人民民主",
+    "focus": false,
+    "h": "大团结大联合，求同存异",
+    "q": "如何理解统一战线是凝聚人心、汇聚力量的强大法宝？",
+    "a": "1.本质是大团结大联合。\n2.坚持求同存异。\n3.做人的工作，壮大共同奋斗力量。\n4.坚持党的统一领导。"
+  },
+  {
+    "s": "第九节——全面依法治国",
+    "focus": false,
+    "h": "国家治理深刻革命，法治轨道",
+    "q": "全面依法治国的地位是什么？",
+    "a": "1.是国家治理的一场深刻革命。\n2.必须在法治轨道上全面建设社会主义现代化国家。"
+  },
+  {
+    "s": "第九节——全面依法治国",
+    "focus": false,
+    "h": "唯一正确道路，党的领导，人民主体，德法结合",
+    "q": "中国特色社会主义法治道路是什么？",
+    "a": "1.是社会主义法治建设成就和经验的集中体现。\n2.是建设社会主义法治国家的唯一正确道路。\n3.坚持党的领导、人民主体、法律面前人人平等。\n4.坚持依法治国与以德治国相结合，从中国实际出发。"
+  },
+  {
+    "s": "第九节——全面依法治国",
+    "focus": false,
+    "h": "党的领导，制度，法治理论",
+    "q": "中国特色社会主义法治道路的核心要义是什么？",
+    "a": "1.坚持党的领导。\n2.坚持中国特色社会主义制度。\n3.贯彻中国特色社会主义法治理论。"
+  },
+  {
+    "s": "第九节——全面依法治国",
+    "focus": false,
+    "h": "法律规范，实施，监督，保障，党内法规",
+    "q": "如何建设和完善中国特色社会主义法治体系？",
+    "a": "1.形成完备法律规范体系。\n2.形成高效法治实施体系。\n3.形成严密法治监督体系。\n4.形成有力法治保障体系。\n5.完善党内法规体系，坚持依宪治国、依宪执政。"
+  },
+  {
+    "s": "第九节——全面依法治国",
+    "focus": false,
+    "h": "三共同，三一体，四环节",
+    "q": "如何建设更高水平的法治中国？",
+    "a": "1.依法治国、依法执政、依法行政共同推进。\n2.法治国家、法治政府、法治社会一体建设。\n3.推进科学立法、严格执法、公正司法、全民守法。"
+  },
+  {
+    "s": "第十节——建设社会主义文化强国",
+    "focus": true,
+    "h": "灵魂，文化兴国运兴，精神需要，文化自信",
+    "q": "为什么要建设中国特色社会主义文化？",
+    "a": "1.文化是国家和民族的灵魂。\n2.文化兴国运兴，文化强民族强。\n3.没有文化自信和繁荣兴盛，就没有民族复兴。\n4.更好满足人民精神文化需要。"
+  },
+  {
+    "s": "第十节——建设社会主义文化强国",
+    "focus": true,
+    "h": "最基本，最深沉，最持久",
+    "q": "为什么说文化自信是最基本、最深沉、最持久的力量？",
+    "a": "1.文化是国家民族的灵魂。\n2.文化自信关乎国运兴衰。\n3.文化安全关系民族精神独立性。"
+  },
+  {
+    "s": "第十节——建设社会主义文化强国",
+    "focus": true,
+    "h": "自信，自觉，文化道路，软实力，创新创造",
+    "q": "如何发展中国特色社会主义文化？",
+    "a": "1.坚定文化自信。\n2.增强文化自觉。\n3.走中国特色社会主义文化发展道路，提升文化软实力。\n4.激发全民族文化创新创造活力。"
+  },
+  {
+    "s": "第十节——建设社会主义文化强国",
+    "focus": true,
+    "h": "为国家立心，为民族立魂",
+    "q": "如何理解意识形态工作的重要性？",
+    "a": "1.是为国家立心、为民族立魂的工作。\n2.关乎党的前途命运。\n3.关乎国家长治久安。\n4.关乎民族凝聚力和向心力。"
+  },
+  {
+    "s": "第十节——建设社会主义文化强国",
+    "focus": true,
+    "h": "建党精神，精神谱系，宝贵财富",
+    "q": "如何理解中国共产党人精神谱系？",
+    "a": "1.以伟大建党精神为源头。\n2.在革命、建设、改革和新时代中发挥重要作用。\n3.是中华民族的宝贵精神财富。"
+  },
+  {
+    "s": "第十节——建设社会主义文化强国",
+    "focus": true,
+    "h": "源头活水，传承弘扬，守正创新",
+    "q": "如何推动中华优秀传统文化创造性转化、创新性发展？",
+    "a": "1.从中华优秀传统文化中寻找源头活水。\n2.传承和弘扬中华优秀传统文化。\n3.警惕虚无传统和复古守旧两种倾向。\n4.坚持守正创新。"
+  },
+  {
+    "s": "第十节——建设社会主义文化强国",
+    "focus": true,
+    "h": "连续，创新，统一，包容，和平",
+    "q": "中华文明的突出特性是什么？",
+    "a": "连续性、创新性、统一性、包容性、和平性。"
+  },
+  {
+    "s": "第十节——建设社会主义文化强国",
+    "focus": true,
+    "h": "传统文化，革命文化，先进文化，马克思主义",
+    "q": "中国特色社会主义文化包括哪些内容？",
+    "a": "1.中华优秀传统文化。\n2.革命文化。\n3.社会主义先进文化。\n4.坚持马克思主义在意识形态领域指导地位。"
+  },
+  {
+    "s": "第十一节——以保障和改善民生为重点加强社会建设",
+    "focus": false,
+    "h": "幸福之基，和谐之本，根本目的，现实利益",
+    "q": "民生工作为什么重要？",
+    "a": "1.民生是人民幸福之基、社会和谐之本。\n2.增进民生福祉是党和国家工作的根本目的。\n3.民生是人民最关心最直接最现实的利益问题。"
+  },
+  {
+    "s": "第十一节——以保障和改善民生为重点加强社会建设",
+    "focus": false,
+    "h": "分配，就业，社保，健康",
+    "q": "保障和改善民生应重点从哪些方面着手？",
+    "a": "1.完善分配制度。\n2.实施就业优先战略。\n3.健全社会保障体系。\n4.推进健康中国建设。"
+  },
+  {
+    "s": "第十一节——以保障和改善民生为重点加强社会建设",
+    "focus": false,
+    "h": "结构合理化，方式科学化，过程民主化",
+    "q": "如何推进社会治理现代化？",
+    "a": "1.加强和创新社会治理。\n2.推动治理结构合理化。\n3.推动治理方式科学化。\n4.推动治理过程民主化。"
+  },
+  {
+    "s": "第十一节——以保障和改善民生为重点加强社会建设",
+    "focus": false,
+    "h": "共建，共治，共享",
+    "q": "为什么社会治理要坚持共建共治共享？",
+    "a": "1.共建是基础：重视制度和体系建设。\n2.共治是关键：打造全民参与的开放治理体系。\n3.共享是目标：增强人民获得感、幸福感、安全感。"
+  },
+  {
+    "s": "第十二节——建设社会主义生态文明",
+    "focus": true,
+    "h": "永续发展，绿水青山，历史性变化",
+    "q": "生态文明建设的重要性是什么？",
+    "a": "1.是关乎中华民族永续发展的根本大计。\n2.坚持绿水青山就是金山银山。\n3.推动生态文明建设和生态环境保护发生历史性、转折性、全局性变化。"
+  },
+  {
+    "s": "第十二节——建设社会主义生态文明",
+    "focus": true,
+    "h": "人类文明，发展短板，优美环境，全球挑战",
+    "q": "如何理解“生态兴则文明兴”？",
+    "a": "1.生态文明建设关系中华民族永续发展。\n2.顺应人类文明进程。\n3.破解我国经济社会发展短板。\n4.满足人民优美生态环境需要。\n5.应对全球生态环境挑战。"
+  },
+  {
+    "s": "第十二节——建设社会主义生态文明",
+    "focus": true,
+    "h": "美丽中国，绿色转型，系统治理，制度法治",
+    "q": "怎样建设社会主义生态文明？",
+    "a": "1.建设美丽中国。\n2.加快发展方式绿色转型。\n3.坚持山水林田湖草沙一体化保护和系统治理。\n4.用最严格制度、最严密法治保护生态环境。"
+  },
+  {
+    "s": "第十二节——建设社会主义生态文明",
+    "focus": true,
+    "h": "绿色低碳，双碳，自觉行动",
+    "q": "怎样加快发展方式绿色转型？",
+    "a": "1.推动形成绿色低碳的生产生活方式。\n2.积极稳妥推进碳达峰碳中和。\n3.把建设美丽中国转化为人民自觉行动。"
+  },
+  {
+    "s": "第十二节——建设社会主义生态文明",
+    "focus": true,
+    "h": "地球生命共同体，全球治理，可持续发展",
+    "q": "中国为全球环境治理作出了哪些贡献？",
+    "a": "1.推动共建地球生命共同体。\n2.积极参与全球环境治理。\n3.推动全球可持续发展。\n4.是全球生态文明建设的重要参与者、贡献者、引领者。"
+  },
+  {
+    "s": "第十三节——全面贯彻落实总体国家安全观",
+    "focus": false,
+    "h": "民族复兴根基，形势复杂，基本遵循",
+    "q": "为什么要坚持总体国家安全观？",
+    "a": "1.国家安全是民族复兴的根基。\n2.新时代国家安全形势更严峻复杂。\n3.总体国家安全观为国家安全工作提供基本遵循。"
+  },
+  {
+    "s": "第十三节——全面贯彻落实总体国家安全观",
+    "focus": false,
+    "h": "统筹发展安全，政治安全，新安全格局，平安中国",
+    "q": "如何全面贯彻落实总体国家安全观？",
+    "a": "1.统筹发展和安全。\n2.把维护政治安全放在首位。\n3.构建统筹各领域安全的新安全格局。\n4.推进国家安全体系和能力现代化。\n5.建设更高水平的平安中国。"
+  },
+  {
+    "s": "第十三节——全面贯彻落实总体国家安全观",
+    "focus": false,
+    "h": "内涵外延，时空领域，内外因素",
+    "q": "新时代我国国家安全形势有什么新变化？",
+    "a": "1.内涵外延更丰富。\n2.时空领域更宽广。\n3.内外因素更复杂。\n4.面临风高浪急甚至惊涛骇浪。"
+  },
+  {
+    "s": "第十三节——全面贯彻落实总体国家安全观",
+    "focus": false,
+    "h": "人民，政治，经济，军事文化社会，国际安全",
+    "q": "总体国家安全观的丰富内涵是什么？",
+    "a": "1.人民安全是宗旨。\n2.政治安全是根本。\n3.经济安全是基础。\n4.军事、文化、社会安全是保障。\n5.促进国际安全是依托。"
+  },
+  {
+    "s": "第十三节——全面贯彻落实总体国家安全观",
+    "focus": false,
+    "h": "发展动力，安全保障，双轮",
+    "q": "为什么要统筹发展和安全？",
+    "a": "1.发展和安全是生存进步必须处理好的首要问题。\n2.发展解决动力问题。\n3.安全解决保障问题。\n4.发展和安全是一体之两翼、驱动之双轮。"
+  },
+  {
+    "s": "第十三节——全面贯彻落实总体国家安全观",
+    "focus": false,
+    "h": "政治安全首位",
+    "q": "为什么要把政治安全放在首位？",
+    "a": "1.政治安全是国家安全的根本。\n2.关系国家主权、政权、制度和意识形态安全。\n3.没有政治安全，其他安全无从谈起。"
+  },
+  {
+    "s": "第十四节——资料标注省略",
+    "focus": false,
+    "h": "本资料省略",
+    "q": "第十四节在资料中如何处理？",
+    "a": "资料原文标注为“省略”，本题仅作章节占位。"
+  },
+  {
+    "s": "第十五节——坚持“一国两制”和推进祖国完全统一",
+    "focus": false,
+    "h": "基本国策，伟大创举，长期繁荣稳定",
+    "q": "如何全面准确理解和贯彻“一国两制”？",
+    "a": "1.是国家的一项基本国策。\n2.是中国特色社会主义的伟大创举。\n3.必须完整准确理解、坚定不移贯彻。\n4.是维护香港、澳门长期繁荣稳定的最佳制度。"
+  },
+  {
+    "s": "第十五节——坚持“一国两制”和推进祖国完全统一",
+    "focus": false,
+    "h": "一国前提，两制派生，国家统一",
+    "q": "如何准确把握“一国”和“两制”的关系？",
+    "a": "1.“一国”是“两制”的前提和基础。\n2.“两制”从属和派生于“一国”。\n3.“一国”是根、本，根深叶茂、本固枝荣。\n4.“一国两制”首先是为了实现和维护国家统一。"
+  },
+  {
+    "s": "第十五节——坚持“一国两制”和推进祖国完全统一",
+    "focus": false,
+    "h": "港澳，由乱到治，融入大局",
+    "q": "如何理解香港、澳门与祖国内地同发展共繁荣？",
+    "a": "1.“一国两制”是维护港澳长期繁荣稳定的最佳制度。\n2.推动香港由乱到治、由治及兴。\n3.支持港澳融入国家发展大局。"
+  },
+  {
+    "s": "第十五节——坚持“一国两制”和推进祖国完全统一",
+    "focus": false,
+    "h": "大势所趋，民心所向，台独绝路",
+    "q": "为什么祖国完全统一一定要实现，也一定能够实现？",
+    "a": "1.民族复兴、国家统一是大势所趋、民心所向。\n2.台湾前途系于国家统一。\n3.“台独”是历史逆流和绝路。\n4.新时代党解决台湾问题的总体方略提供行动纲领。"
+  },
+  {
+    "s": "第十六节——中国特色大国外交和推动构建人类命运共同体",
+    "focus": false,
+    "h": "动荡变革，力量变化，全球化逆流，秩序调整",
+    "q": "当今世界百年未有之大变局有哪些表现？",
+    "a": "1.进入新的动荡变革期。\n2.国际力量对比深刻变化。\n3.经济全球化遭遇逆流。\n4.国际体系和国际秩序深度调整。"
+  },
+  {
+    "s": "第十六节——中国特色大国外交和推动构建人类命运共同体",
+    "focus": false,
+    "h": "地球村，中国方案",
+    "q": "如何理解构建人类命运共同体？",
+    "a": "1.人类生活在同一个地球村。\n2.各国越来越成为你中有我、我中有你的命运共同体。\n3.这是解决世界之问、人类之问、时代之问的中国方案。"
+  },
+  {
+    "s": "第十六节——中国特色大国外交和推动构建人类命运共同体",
+    "focus": false,
+    "h": "伙伴，安全，经济，文明，生态",
+    "q": "构建人类命运共同体需要从哪些方面努力？",
+    "a": "伙伴关系、安全格局、经济发展、文明交流、生态建设。"
+  },
+  {
+    "s": "第十六节——中国特色大国外交和推动构建人类命运共同体",
+    "focus": false,
+    "h": "和平发展，新型国际关系，主权利益，全球治理",
+    "q": "中国特色大国外交的主要内容是什么？",
+    "a": "1.坚持走和平发展道路。\n2.推动建设新型国际关系。\n3.维护国家主权、安全、发展利益。\n4.参与全球治理体系改革和建设。"
+  },
+  {
+    "s": "第十六节——中国特色大国外交和推动构建人类命运共同体",
+    "focus": false,
+    "h": "独立自主，和平外交",
+    "q": "为什么我国要坚定奉行独立自主的和平外交政策？",
+    "a": "1.由党的性质宗旨和社会主义制度决定。\n2.基于中国历史文化传统。\n3.顺应和平发展的世界大势。"
+  },
+  {
+    "s": "第十六节——中国特色大国外交和推动构建人类命运共同体",
+    "focus": false,
+    "h": "三大倡议",
+    "q": "全球发展倡议、全球安全倡议、全球文明倡议分别强调什么？",
+    "a": "1.全球发展倡议：发展优先、人民中心、普惠包容、创新驱动。\n2.全球安全倡议：尊重主权、遵守宪章、重视合理安全关切、对话协商。\n3.全球文明倡议：尊重文明多样性，重视传承创新，推动人文交流合作。"
+  },
+  {
+    "s": "第十六节——中国特色大国外交和推动构建人类命运共同体",
+    "focus": false,
+    "h": "联合国，国际法，宪章宗旨原则",
+    "q": "如何坚持真正的多边主义？",
+    "a": "1.维护以联合国为核心的国际体系。\n2.维护以国际法为基础的国际秩序。\n3.维护以联合国宪章宗旨和原则为基础的国际关系准则。"
+  },
+  {
+    "s": "第十七节——全面从严治党",
+    "focus": false,
+    "h": "鲜明主题，必由之路，政治优势，根本保证",
+    "q": "为什么要全面从严治党？",
+    "a": "1.是新时代党的建设的鲜明主题。\n2.是党永葆生机活力、走好新的赶考之路的必由之路。\n3.是马克思主义政党的政治优势。\n4.是实现民族复兴的根本保证。\n5.是决定党兴衰成败的关键因素。"
+  },
+  {
+    "s": "第十七节——全面从严治党",
+    "focus": false,
+    "h": "自我净化，自我完善，自我革新，自我提高",
+    "q": "党的十八大以来管党治党取得了哪些变化？",
+    "a": "1.坚持和加强党的全面领导。\n2.坚持党要管党、全面从严治党。\n3.党的自我净化、自我完善、自我革新、自我提高能力增强。\n4.推进政治、思想、作风、制度、组织、纪律和反腐建设。"
+  },
+  {
+    "s": "第十七节——全面从严治党",
+    "focus": false,
+    "h": "跳出周期律，大党难题，自我革命",
+    "q": "如何理解全面从严治党是自我革命？",
+    "a": "1.用于跳出历史周期率。\n2.保持解决大党独有难题的清醒和坚定。\n3.以伟大自我革命引领伟大社会革命。\n4.确保党始终成为坚强领导核心。"
+  },
+  {
+    "s": "第十七节——全面从严治党",
+    "focus": false,
+    "h": "政治建设首位",
+    "q": "为什么要把党的政治建设摆在首位？",
+    "a": "1.政治建设是全面从严治党的根本性问题。\n2.确保全党服从中央，维护党中央权威和集中统一领导。\n3.政治方向是党生存发展第一位的问题。"
+  },
+  {
+    "s": "第十七节——全面从严治党",
+    "focus": false,
+    "h": "不敢腐，不能腐，不想腐",
+    "q": "如何理解一体推进不敢腐、不能腐、不想腐？",
+    "a": "1.不敢腐：形成强大震慑。\n2.不能腐：形成刚性制度约束。\n3.不想腐：发挥思想教育优势。\n4.三者同时发力、同向发力、综合发力。"
+  },
+  {
+    "s": "第十七节——全面从严治党",
+    "focus": false,
+    "h": "自我革命，社会革命",
+    "q": "如何理解以伟大自我革命引领伟大社会革命？",
+    "a": "1.党的自我革命是伟大社会革命的基础和先导。\n2.伟大社会革命是党的自我革命的根本目的。\n3.二者统一于新时代中国特色社会主义伟大实践。"
+  },
+  {
+    "s": "第十七节——全面从严治党",
+    "focus": false,
+    "h": "四大考验，四种危险",
+    "q": "新形势下党面临哪些考验和危险？",
+    "a": "1.四大考验：执政考验、改革开放考验、市场经济考验、外部环境考验。\n2.四种危险：精神懈怠危险、能力不足危险、脱离群众危险、消极腐败危险。"
+  },
+  {
+    "s": "第十七节——全面从严治党",
+    "focus": false,
+    "h": "八项规定，群众问题，四风",
+    "q": "中央八项规定精神主要针对什么问题？",
+    "a": "1.重点是改进工作作风、密切联系群众。\n2.反对形式主义、官僚主义、享乐主义、奢靡之风。\n3.强调厉行勤俭节约、廉洁从政、作风务实。"
+  }
+];
+
+    const questions = data.map((item, index) => ({ id: index, ...item }));
+    let activeIds = questions.map(q => q.id);
+    let currentMode = 'seq';
+    let currentIndex = 0;
+    let errorList = [];
+    let shuffledIds = [];
+
+    function getModeIds(mode) {
+        if (mode === 'focus') return questions.filter(q => q.focus === true).map(q => q.id);
+        if (mode === 'err') return [...errorList];
+        if (mode === 'rand') {
+            if (!shuffledIds.length || shuffledIds.length !== questions.length) {
+                shuffledIds = questions.map(q => q.id).sort(() => Math.random() - 0.5);
+            }
+            return shuffledIds;
+        }
+        return questions.map(q => q.id);
+    }
+
+    function switchMode(mode) {
+        if (mode === 'err' && errorList.length === 0) {
+            alert("当前错题本为空！");
+            return;
+        }
+
+        currentMode = mode;
+        if (mode === 'rand') shuffledIds = questions.map(q => q.id).sort(() => Math.random() - 0.5);
+
+        document.querySelectorAll('.mode-group button').forEach(btn => btn.classList.remove('active'));
+        const btn = document.getElementById(`mode-${mode}`);
+        if (btn) btn.classList.add('active');
+
+        const quizArea = document.getElementById('quiz-area');
+        const listArea = document.getElementById('list-view');
+        const navControls = document.getElementById('nav-controls');
+
+        if (mode === 'list') {
+            quizArea.style.display = 'none';
+            listArea.style.display = 'block';
+            navControls.style.visibility = 'hidden';
+            renderList();
+            updateStats(questions.length, questions.length);
+            return;
+        }
+
+        quizArea.style.display = 'flex';
+        listArea.style.display = 'none';
+        navControls.style.visibility = 'visible';
+
+        activeIds = getModeIds(mode);
+        currentIndex = 0;
+        loadQuestion();
+    }
+
+    function getCurrentQuestion() {
+        if (!activeIds.length) activeIds = getModeIds(currentMode);
+        const realId = activeIds[currentIndex % activeIds.length];
+        return questions[realId];
+    }
+
+    function loadQuestion() {
+        resetInputArea();
+
+        if (!activeIds.length) activeIds = getModeIds(currentMode);
+        const q = getCurrentQuestion();
+        const displayIndex = currentIndex % activeIds.length + 1;
+
+        document.getElementById('section-text').innerText = q.s || "习概重点";
+        document.getElementById('question-text').innerText = `[${displayIndex}] ${q.q}`;
+        document.getElementById('jump-index').value = displayIndex;
+
+        const hintEl = document.getElementById('hint-display');
+        hintEl.style.display = 'none';
+        hintEl.innerHTML = '';
+
+        updateStats(displayIndex, activeIds.length);
+    }
+
+    function toggleHint() {
+        const hintEl = document.getElementById('hint-display');
+        const q = getCurrentQuestion();
+
+        if (hintEl.style.display === 'none' || hintEl.style.display === '') {
+            const hintContent = q.h ? q.h : "抓住关键词，按逻辑点作答。";
+            hintEl.innerHTML = `<strong>提示关键词：</strong>${escapeHtml(hintContent)}`;
+            hintEl.style.display = 'block';
+        } else {
+            hintEl.style.display = 'none';
+        }
+    }
+
+    function renderList() {
+        const container = document.getElementById('list-view');
+        let html = '';
+
+        questions.forEach((item, index) => {
+            html += `
+                <div class="list-item" id="list-item-${index}" onclick="jumpFromList(${index})">
+                    <div class="list-s">${escapeHtml(item.s)}</div>
+                    <div class="list-q">${escapeHtml(item.q)}</div>
+                    <div class="list-a">${escapeHtml(item.a)}</div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+    }
+
+    function jumpFromList(realIndex) {
+        currentMode = 'seq';
+        activeIds = getModeIds('seq');
+        currentIndex = activeIds.indexOf(realIndex);
+        if (currentIndex < 0) currentIndex = 0;
+
+        document.getElementById('quiz-area').style.display = 'flex';
+        document.getElementById('list-view').style.display = 'none';
+        document.getElementById('nav-controls').style.visibility = 'visible';
+
+        document.querySelectorAll('.mode-group button').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('mode-seq').classList.add('active');
+
+        loadQuestion();
+    }
+
+    function handleJumpEnter(e) {
+        if (e.key === 'Enter') jumpToQuestion();
+    }
+
+    function jumpToQuestion() {
+        const input = document.getElementById('jump-index');
+        let val = parseInt(input.value, 10);
+        let total = activeIds.length;
+
+        if (isNaN(val) || val < 1 || val > total) {
+            alert(`请输入 1 - ${total} 之间的数字`);
+            return;
+        }
+
+        currentIndex = val - 1;
+        loadQuestion();
+    }
+
+    function changeQuestion(delta) {
+        let total = activeIds.length;
+        currentIndex += delta;
+
+        if (currentIndex < 0) currentIndex = total - 1;
+        if (currentIndex >= total) currentIndex = 0;
+
+        loadQuestion();
+    }
+
+    function resetInputArea() {
+        document.getElementById('result-area').style.display = 'none';
+        document.getElementById('btn-submit').style.display = 'inline-block';
+        document.getElementById('user-input').value = '';
+        document.getElementById('user-input').disabled = false;
+        document.getElementById('btn-submit').innerText = "提交验证";
+        document.getElementById('btn-submit').disabled = false;
+        document.getElementById('btn-submit').style.backgroundColor = 'var(--success-color)';
+    }
+
+    function getModeLabel() {
+        if (currentMode === 'focus') return '重点模式（中国式现代化/高质量发展/文化强国/生态文明）';
+        if (currentMode === 'rand') return '随机模式';
+        if (currentMode === 'err') return '错题本';
+        if (currentMode === 'list') return '知识点一览';
+        return '顺序模式';
+    }
+
+    function updateStats(current, total) {
+        document.getElementById('data-source-text').innerText = `当前题库: ${getModeLabel()}（共${questions.length}题）`;
+        document.getElementById('progress-text').innerText = `进度: ${current} / ${total}`;
+        document.getElementById('error-count').innerText = `错题本: ${errorList.length}`;
+    }
+
+    function renderDiff(userStr, stdStr) {
+        let tempUser = userStr.replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, "");
+        let html = '';
+
+        for (let char of stdStr) {
+            if (/[\u4e00-\u9fa5a-zA-Z0-9]/.test(char)) {
+                if (tempUser.includes(char)) {
+                    html += `<span style="color: var(--success-color); font-weight:bold;">${escapeHtml(char)}</span>`;
+                    tempUser = tempUser.replace(char, '');
+                } else {
+                    html += `<span style="color: var(--error-color); opacity: 0.6;">${escapeHtml(char)}</span>`;
+                }
+            } else {
+                html += escapeHtml(char);
+            }
+        }
+        return html;
+    }
+
+    function calculateSimilarity(str1, str2) {
+        const clean1 = str1.replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, "");
+        const clean2 = str2.replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, "");
+        if (clean2.length === 0) return 0;
+
+        let matchCount = 0;
+        let tempStr1 = clean1;
+        for (let char of clean2) {
+            if (tempStr1.includes(char)) {
+                matchCount++;
+                tempStr1 = tempStr1.replace(char, '');
+            }
+        }
+        const maxLength = Math.max(clean1.length, clean2.length);
+        return Math.floor((matchCount / maxLength) * 100);
+    }
+
+    function checkAnswer() {
+        const userVal = document.getElementById('user-input').value;
+        const currentQ = getCurrentQuestion();
+
+        if (!userVal.trim()) {
+            alert("请先输入答案");
+            return;
+        }
+
+        const score = calculateSimilarity(userVal, currentQ.a);
+        const passed = score >= 60;
+
+        if (!passed && !errorList.includes(currentQ.id)) {
+            errorList.push(currentQ.id);
+        }
+
+        const resultHeader = document.getElementById('result-header');
+        const badgeClass = passed ? 'badge-pass' : 'badge-fail';
+        const badgeText = passed ? '通过' : '未通过';
+
+        resultHeader.innerHTML = `
+            <span class="score-badge ${badgeClass}">${badgeText}</span>
+            <span>得分: ${score}%</span>
+        `;
+
+        document.getElementById('score-text').innerText = `准确率: ${score}%`;
+        document.getElementById('standard-answer').innerHTML = renderDiff(userVal, currentQ.a).replace(/\n/g, '<br>');
+        document.getElementById('result-area').style.display = 'block';
+
+        const submitBtn = document.getElementById('btn-submit');
+        submitBtn.innerText = passed ? "回答正确" : "回答错误";
+        submitBtn.disabled = true;
+        submitBtn.style.backgroundColor = '#95a5a6';
+
+        updateStats(currentIndex % activeIds.length + 1, activeIds.length);
+    }
+
+    function escapeHtml(str) {
+        return String(str).replace(/[&<>"']/g, s => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        }[s]));
+    }
+
+    switchMode('seq');
+</script>
+
+</body>
+</html>
